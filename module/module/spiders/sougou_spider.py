@@ -8,7 +8,7 @@ class SougouSpiderSpider(scrapy.Spider):
     allowed_domains = ['www.sogou.com', 'snapshot.sogoucdn.com']
     # start_urls = ['https://www.sogou.com/web?query=Joseph%20Paparella+linkedin&_asf=www.sogou.com']
     url_template = 'https://www.sogou.com/web?query={name}+linkedin&_asf=www.sogou.com&page={page}'
-    name_save = []
+    # name_save = []
     def start_requests(self):
         with open('./module/spiders/name_use.txt', 'r') as f:
             name_list = f.readlines()
@@ -52,17 +52,16 @@ class SougouSpiderSpider(scrapy.Spider):
         message = content.xpath(".//h2/text()").extract()
         address = content.xpath(".//h3/text()").extract()
         job = content.xpath(".//h4/text()").extract()
-        right_rail = response.xpath("//div[contains(@class,'right-rail')]")
-        name_list = right_rail.xpath(".//img/@alt").extract()
-        try:
-            fp = open("./module/spiders/name_use.txt","a")
-            for name in name_list:
-                if name.encode('UTF-8').isalpha() and not "inkedin" in name:
-                    self.name_save.append(name)
-                    fp.write(name)
-                    fp.write('\n')
-        finally:
-            fp.close()
+
+        name_list = response.xpath("//div[@class='right-rail']/div/ul/li/a/img/@alt").extract()
+
+        # name_list = right_rail.xpath(".//img/@alt").extract()
+        print(name_list)
+        with open('./module/name_use.txt', 'a') as fp:
+            for name1 in name_list:
+                fp.write(name1)
+                fp.write('\n')
+
         # image_list = right_rail.xpath(".//img/@data-delayed-url")
         item = ModuleItem(name=name, image_url=image_url, message=message, address=address, job=job)
         print("sb")

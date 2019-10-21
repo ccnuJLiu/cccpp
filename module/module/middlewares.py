@@ -178,8 +178,8 @@ tunnel_host = "tps136.kdlapi.com"
 tunnel_port = "15818"
 
 # 隧道id和密码
-tid = "t17147947775063"
-password = "2rdjwn8q"
+tid = "t17166103219953"
+password = "jfix70w2"
 
 logger = logging.getLogger(__name__)
 
@@ -187,38 +187,13 @@ logger = logging.getLogger(__name__)
 
 
 class IPProxyDownloadMiddleware(object):
-    # def process_request(self, request, spider):
-    #     proxy = "tps136.kdlapi.com:15818"
-    #     user_password = "t17147947775063:2rdjwn8q"
-    #     request.meta['proxy'] = proxy
-    #     b64_user_password = base64.b64encode(user_password.encode('utf-8'))
-    #     request.headers['Proxy-Authorization'] = 'Basic' + b64_user_password.decode('utf-8')
 
     def process_request(self, request, spider):
-
-        # proxy ="tps136.kdlapi.com:15818"
-        #
-        # # 隧道id和密码
-        # username = "t17147947775063"
-        # password = "2rdjwn8q"
-        # #password="3343445"
-        #
-        # request.meta['proxy'] = "http://%(user)s:%(pwd)s@%(proxy)s/" % {'user': username, 'pwd': password, 'proxy': proxy}
-        # # print("get ip")
-
-        # proxy = "tps136.kdlapi.com:15818"
-        # username = "t17147947775063"
-        # password = "2rdjwn8q"
-        # request.headers['Proxy-Authorization'] = "Basic" + base64.urlsafe_b64encode(bytes((username+":"+password), "ascii")).decode("utf-8")
-        # request.meta["proxy"] = proxy
         proxy_url = 'http://%s:%s@%s:%s' % (tid, password, tunnel_host, tunnel_port)
         request.meta['proxy'] = proxy_url  # 设置代理
         logger.debug("using proxy: {}".format(request.meta['proxy']))
-        # 设置代理身份认证
-        # Python3 写法
+
         auth = "Basic %s" % (base64.b64encode(('%s:%s' % (tid, password)).encode('utf-8'))).decode('utf-8')
-        # Python2 写法
-        # auth = "Basic " + base64.b64encode('%s:%s' % (tid, password))
         request.headers['Proxy-Authorization'] = auth
 
 
