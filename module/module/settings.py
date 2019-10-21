@@ -41,13 +41,9 @@ DOWNLOAD_DELAY = 1
 
 # Override the default request headers:
 DEFAULT_REQUEST_HEADERS ={
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-        'Accept-Encoding': 'gzip, deflate',
-        'Accept-Language': 'zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4,zh-TW;q=0.2,mt;q=0.2',
-        'Cache-Control': 'max-age=0',
-        'Connection': 'keep-alive',
-        'Upgrade-Insecure-Requests': '1',
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36'
+    'User-Agent': 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; QQDownload 732; .NET4.0C; .NET4.0E)',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Language': 'ch',
     }
 
 # Enable or disable spider middlewares
@@ -61,10 +57,10 @@ DEFAULT_REQUEST_HEADERS ={
 DOWNLOADER_MIDDLEWARES = {
     #'scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware': 110,
     #'scrapy.contrib.downloadermiddleware.useragent.UserAgentMiddleware': 2,
-    'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 110,
+   # 'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 110,
     'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': 2,
     'module.middlewares.AgentMiddleware': 1,
-    'module.middlewares.IPProxyDownloadMiddleware': 100,
+   # 'module.middlewares.IPProxyDownloadMiddleware': 100,
 }
 
 # Enable or disable extensions
@@ -76,7 +72,7 @@ DOWNLOADER_MIDDLEWARES = {
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   'module.pipelines.ModulePipeline': 300,
+   'module.pipelines.ModulePipeline': 99,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
