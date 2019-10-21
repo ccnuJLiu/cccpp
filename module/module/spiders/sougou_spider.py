@@ -14,7 +14,7 @@ class SougouSpiderSpider(scrapy.Spider):
             name_list = f.readlines()
         for name in name_list:
             name = name.strip("\n")
-            for page in range(1,4):
+            for page in range(1, 4):
                 url_next = self.url_template.format(name=name,page=page)
                 yield scrapy.Request(url_next,callback=self.parse)
 
@@ -76,6 +76,5 @@ class SougouSpiderSpider(scrapy.Spider):
         #         name = name_list[j]
         #         url = 'https://www.sogou.com/web?query=' + name + '+linkdin&_asf=www.sogou.com'
         #         yield scrapy.Request(url, callback=self.parse)
-
 
 
