@@ -65,6 +65,7 @@ class SougouSpiderSpider(scrapy.Spider):
             fp.close()
         # image_list = right_rail.xpath(".//img/@data-delayed-url")
         item = ModuleItem(name=name, image_url=image_url, message=message, address=address, job=job)
+        print("sb")
         yield item
         # right_rail = response.xpath("//div[@class='right-rail']")
         # name_list = right_rail.xpath(".//img/@alt").extract()
