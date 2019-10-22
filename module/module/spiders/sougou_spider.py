@@ -10,7 +10,7 @@ class SougouSpiderSpider(scrapy.Spider):
     url_template = 'https://www.sogou.com/web?query={name}+linkedin&_asf=www.sogou.com&page={page}'
     # name_save = []
     def start_requests(self):
-        with open('./module/spiders/name_use.txt', 'r') as f:
+        with open('./module/name_use.txt', 'r') as f:
             name_list = f.readlines()
         for name in name_list:
             name = name.strip("\n")
@@ -57,7 +57,7 @@ class SougouSpiderSpider(scrapy.Spider):
 
         # name_list = right_rail.xpath(".//img/@alt").extract()
         print(name_list)
-        with open('./module/name_use.txt', 'a') as fp:
+        with open('./module/name_use1.txt', 'a') as fp:
             for name1 in name_list:
                 fp.write(name1)
                 fp.write('\n')
