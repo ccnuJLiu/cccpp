@@ -4,24 +4,23 @@ from scrapy.selector.unified import SelectorList
 from module.items import ModuleItem
 #上面导包路径没有问题
 class SougouSpiderSpider(scrapy.Spider):
-    name = 'sougou_spider'
+    name = 'sougou_spider_cp'
     allowed_domains = ['www.sogou.com', 'snapshot.sogoucdn.com']
     # start_urls = ['https://www.sogou.com/web?query=Joseph%20Paparella+linkedin&_asf=www.sogou.com']
     url_template = 'https://www.sogou.com/web?query={name}+linkedin&_asf=www.sogou.com&page={page}'
-    name_save = []
+    # name_save = []
     def start_requests(self):
-        with open('./module/spiders/name_use.txt', 'r') as f:
+        with open('./module/name_use1.txt', 'r') as f:
             name_list = f.readlines()
         for name in name_list:
             name = name.strip("\n")
-            for page in range(1, 10):
-                print("This is page:", page)
-                url_next = self.url_template.format(name=name, page=page)
+            for page in range(1,10):
+                url_next = self.url_template.format(name=name,page=page)
                 yield scrapy.Request(url_next,callback=self.parse)
 
     def parse(self, response):
         url_name = []
-        for i in range(0, 10):
+        for i in range(0,10):
             temp1 = response.xpath("//div[@class='fb']/a[@id='sogou_snapshot_"+str(i)+"']/@href").extract()
             temp2 = response.xpath("//div[@class='fb']/cite[@id='cacheresult_info_" + str(i)+"']/text()").extract()
             if not temp1 :
@@ -30,7 +29,7 @@ class SougouSpiderSpider(scrapy.Spider):
                 if not temp2:
                     pass
                 else:
-                    if "linkedin.com" in temp2[0]:
+                    if "linkedin.com" in temp2[0] :
                         url_name.append(temp1[0])
 
         print("%"*2+"parse"+"%"*2)
@@ -53,20 +52,19 @@ class SougouSpiderSpider(scrapy.Spider):
         message = content.xpath(".//h2/text()").extract()
         address = content.xpath(".//h3/text()").extract()
         job = content.xpath(".//h4/text()").extract()
-        right_rail = response.xpath("//div[@class='right-rail']" or "//section[contains(@class,'right-rail')]")
+
+        name_list = response.xpath("//div[@class='right-rail']/div/ul/li/a/img/@alt").extract()
+
         # name_list = right_rail.xpath(".//img/@alt").extract()
-        name_list = right_rail.xpath(".//section//h3/@name" or "//section//div//h3[@class]").extract()
-        print('name list is:', name_list)
-        try:
-            fp = open("./module/name_use.txt", "a")
+        print(name_list)
+        with open('./module/name_use1.txt', 'a') as fp:
             for name1 in name_list:
-                self.name_save.append(name1)
                 fp.write(name1)
                 fp.write('\n')
-        finally:
-            fp.close()
+
         # image_list = right_rail.xpath(".//img/@data-delayed-url")
         item = ModuleItem(name=name, image_url=image_url, message=message, address=address, job=job)
+        print("sb")
         yield item
         # right_rail = response.xpath("//div[@class='right-rail']")
         # name_list = right_rail.xpath(".//img/@alt").extract()

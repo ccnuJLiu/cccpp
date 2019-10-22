@@ -165,21 +165,26 @@ class AgentMiddleware(UserAgentMiddleware):
         "Mozilla/5.0 (X11; U; Linux x86_64; zh-CN; rv:1.9.2.10) Gecko/20100922 Ubuntu/10.10 (maverick) Firefox/3.6.10",
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36",
     ]
-    def __init__(self, user_agent=''):
-        user_agent = random.choice(self.agents)
-        self.user_agent = user_agent
+    # def __init__(self, user_agent=''):
+    #     user_agent = random.choice(self.agents)
+    #     self.User_Agent = user_agent
+
+    # def process_request(self, request, spider):
+    #     ua = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:39.0) Gecko/20100101 Firefox/39.0'
+    #     request.headers.setdefault('User-Agent', ua)
 
     def process_request(self, request, spider):
-        ua = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:39.0) Gecko/20100101 Firefox/39.0'
-        request.headers.setdefault('User-Agent', ua)
+        user_agent = random.choice(self.agents)
+        request.headers['User-Agent'] = user_agent
+
 
 # 隧道服务器
 tunnel_host = "tps136.kdlapi.com"
 tunnel_port = "15818"
 
 # 隧道id和密码
-tid = "t17147947775063"
-password = "2rdjwn8q"
+tid = "t17166103219953"
+password = "jfix70w2"
 
 logger = logging.getLogger(__name__)
 
@@ -195,22 +200,6 @@ class IPProxyDownloadMiddleware(object):
     #     request.headers['Proxy-Authorization'] = 'Basic' + b64_user_password.decode('utf-8')
 
     def process_request(self, request, spider):
-
-        # proxy ="tps136.kdlapi.com:15818"
-        #
-        # # 隧道id和密码
-        # username = "t17147947775063"
-        # password = "2rdjwn8q"
-        # #password="3343445"
-        #
-        # request.meta['proxy'] = "http://%(user)s:%(pwd)s@%(proxy)s/" % {'user': username, 'pwd': password, 'proxy': proxy}
-        # # print("get ip")
-
-        # proxy = "tps136.kdlapi.com:15818"
-        # username = "t17147947775063"
-        # password = "2rdjwn8q"
-        # request.headers['Proxy-Authorization'] = "Basic" + base64.urlsafe_b64encode(bytes((username+":"+password), "ascii")).decode("utf-8")
-        # request.meta["proxy"] = proxy
         proxy_url = 'http://%s:%s@%s:%s' % (tid, password, tunnel_host, tunnel_port)
         request.meta['proxy'] = proxy_url  # 设置代理
         logger.debug("using proxy: {}".format(request.meta['proxy']))

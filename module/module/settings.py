@@ -41,9 +41,11 @@ DOWNLOAD_DELAY = 1
 
 # Override the default request headers:
 DEFAULT_REQUEST_HEADERS ={
-    'User-Agent': 'Mozilla/5.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; QQDownload 732; .NET4.0C; .NET4.0E)',
+    # 'User-Agent': 'Mozilla/5.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; QQDownload 732; .NET4.0C; .NET4.0E)',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
     'Accept-Language': 'ch',
+    "Accept-Encoding": "Gzip",
     }
 
 # Enable or disable spider middlewares
@@ -57,10 +59,10 @@ DEFAULT_REQUEST_HEADERS ={
 DOWNLOADER_MIDDLEWARES = {
     #'scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware': 110,
     #'scrapy.contrib.downloadermiddleware.useragent.UserAgentMiddleware': 2,
-   # 'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 110,
+    'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 110,
     'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': 2,
     'module.middlewares.AgentMiddleware': 1,
-   # 'module.middlewares.IPProxyDownloadMiddleware': 100,
+    'module.middlewares.IPProxyDownloadMiddleware': 100
 }
 
 # Enable or disable extensions
