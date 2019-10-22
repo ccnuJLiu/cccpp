@@ -10,11 +10,27 @@ class SougouSpiderSpider(scrapy.Spider):
     url_template = 'https://www.sogou.com/web?query={name}+linkedin&_asf=www.sogou.com&page={page}'
     # name_save = []
     def start_requests(self):
-        with open('./module/name_use.txt', 'r') as f:
-            name_list = f.readlines()
-        for name in name_list:
+        with open('./module/name_use.txt', 'r',encoding='gbk') as f:
+            name_list1 = f.readlines()
+            name_set1 = set(name_list1)
+        with open('./module/name_use.txt', 'w',encoding='gbk') as fp:
+            for name1 in name_set1:
+                name1 = name1.strip("\n")
+                fp.write(name1)
+                fp.write('\n')
+        with open('./module/name_use1.txt', 'r',encoding='gbk') as f:
+            name_list2 = f.readlines()
+            name_set2 = set(name_list2)
+        name_search = name_set2.difference(name_set1)
+        with open('./module/name_use1.txt', 'w',encoding='gbk') as fp:
+            for name2 in name_search:
+                name2 = name2.strip("\n")
+                fp.write(name2)
+                fp.write('\n')
+        print(name_search)
+        for name in name_search:
             name = name.strip("\n")
-            for page in range(1,4):
+            for page in range(1,2):
                 url_next = self.url_template.format(name=name,page=page)
                 yield scrapy.Request(url_next,callback=self.parse)
 
@@ -44,11 +60,18 @@ class SougouSpiderSpider(scrapy.Spider):
     def parse_message(self, response):
         content = response.xpath("//div[@class='topcard__bottom-section']")
         image_url = content.xpath(".//img[@class='entity-image entity-image--profile entity-image--circle-8 topcard__profile-image lazy-load']/@data-delayed-url").extract()
-        name_index = content.xpath(".//h1")
-        if not name_index:
-            name = ''
+        name = content.xpath(".//img[@class='entity-image entity-image--profile entity-image--circle-8 topcard__profile-image lazy-load']/@alt").extract()
+        # if not name_index:
+        #     name = ''
+        # else:
+        #     name = name_index.xpath("string(.)").extract()[0]
+        if not name:
+            pass
         else:
-            name = name_index.xpath("string(.)").extract()[0]
+            with open('./module/name_use.txt', 'a') as fp:
+                name_new = name[0]
+                fp.write(name_new)
+                fp.write('\n')
         message = content.xpath(".//h2/text()").extract()
         address = content.xpath(".//h3/text()").extract()
         job = content.xpath(".//h4/text()").extract()
@@ -61,21 +84,23 @@ class SougouSpiderSpider(scrapy.Spider):
             for name1 in name_list:
                 fp.write(name1)
                 fp.write('\n')
-
         # image_list = right_rail.xpath(".//img/@data-delayed-url")
         item = ModuleItem(name=name, image_url=image_url, message=message, address=address, job=job)
         print("sb")
         yield item
-        # right_rail = response.xpath("//div[@class='right-rail']")
-        # name_list = right_rail.xpath(".//img/@alt").extract()
-        # # print(name_list)
-        # for j in range(len(name_list)):
-        #     if not name_list:
-        #         return
-        #     else:
-        #         name = name_list[j]
-        #         url = 'https://www.sogou.com/web?query=' + name + '+linkdin&_asf=www.sogou.com'
-        #         yield scrapy.Request(url, callback=self.parse)
+
+# if __name__ == '__main__':
+#     with open('name_use1.txt', 'r',encoding='gbk') as f:
+#         name_list1 = f.readlines()
+#         name_set1 = set(name_list1)
+#     with open('name_use2.txt', 'r',encoding='gbk') as f:
+#         name_list2 = f.readlines()
+#         name_set2 = set(name_list2)
+#     name_search = name_set2.difference(name_set1)
+#     print(name_list1)
+#     print(name_list2)
+#     print(name_search)
+
 
 
 
