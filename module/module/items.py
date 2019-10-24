@@ -10,9 +10,11 @@ import scrapy
 
 class ModuleItem(scrapy.Item):
     name = scrapy.Field()
+    name_url = scrapy.Field()
     image_url = scrapy.Field()
+    image_name = scrapy.Field()
     message = scrapy.Field()
     address = scrapy.Field()
     job = scrapy.Field()
-    # name_url = scrapy.Field()
+
 

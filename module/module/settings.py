@@ -34,7 +34,7 @@ DOWNLOAD_DELAY = 1
 #CONCURRENT_REQUESTS_PER_IP = 16
 
 # Disable cookies (enabled by default)
-#COOKIES_ENABLED = False
+# COOKIES_ENABLED = False
 
 # Disable Telnet Console (enabled by default)
 #TELNETCONSOLE_ENABLED = False
@@ -43,7 +43,7 @@ DOWNLOAD_DELAY = 1
 DEFAULT_REQUEST_HEADERS ={
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-    'Accept-Language': ' en-us',
+    'Accept-Language': 'en-us',
     }
 
 # Enable or disable spider middlewares
@@ -58,9 +58,9 @@ DOWNLOADER_MIDDLEWARES = {
     #'scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware': 110,
     #'scrapy.contrib.downloadermiddleware.useragent.UserAgentMiddleware': 2,
    'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 110,
-    'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': 2,
+    # 'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': 2,
     'module.middlewares.AgentMiddleware': 1,
-   'module.middlewares.IPProxyDownloadMiddleware': 100,
+   # 'module.middlewares.IPProxyDownloadMiddleware': 100,
 }
 
 # Enable or disable extensions
@@ -73,8 +73,9 @@ DOWNLOADER_MIDDLEWARES = {
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
    'module.pipelines.ModulePipeline': 99,
+    'module.pipelines.DownLoadPipeline':98,
 }
-
+IMAGES_STORE = 'image'
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
 #AUTOTHROTTLE_ENABLED = True

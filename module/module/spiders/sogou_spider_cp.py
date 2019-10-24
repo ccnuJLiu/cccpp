@@ -60,11 +60,16 @@ class SougouSpiderSpider(scrapy.Spider):
     def parse_message(self, response):
         content = response.xpath("//div[@class='topcard__bottom-section'] | //div[@class='top-card-layout__card']")
         image_url = content.xpath(".//img[contains(@class, 'entity-image entity-image--profile entity-image--circle-8')]/@data-delayed-url").extract()
+        if not image_url:
+            image_name =""
+        else:
+            image_url = image_url[0]
+            image_hashcode = hash(image_url)
+            if image_hashcode < 0:
+                image_name = str(abs(image_hashcode))+"-"
+            else:
+                image_name = str(image_hashcode)
         name = content.xpath(".//img[contains(@class, 'entity-image entity-image--profile entity-image--circle-8')]/@alt").extract()
-        # if not name_index:
-        #     name = ''
-        # else:
-        #     name = name_index.xpath("string(.)").extract()[0]
         if not name:
             pass
         else:
@@ -75,7 +80,7 @@ class SougouSpiderSpider(scrapy.Spider):
         message = content.xpath(".//h2/text()").extract()
         address = content.xpath(".//h3/text() | .//h3/span[@class='top-card__subline-item']/text()").extract()
         job = content.xpath(".//h4/text()").extract()
-
+        name_url = content.xpath("/html/body/div[1]/div/p/a/@href").extract()
         name_list = response.xpath("//div[@class='right-rail']/div/ul/li/a/img/@alt").extract()
 
         # name_list = right_rail.xpath(".//img/@alt").extract()
@@ -84,7 +89,12 @@ class SougouSpiderSpider(scrapy.Spider):
             for name1 in name_list:
                 fp.write(name1)
                 fp.write('\n')
-        # image_list = right_rail.xpath(".//img/@data-delayed-url")
-        item = ModuleItem(name=name, image_url=image_url, message=message, address=address, job=job)
-        print("sb")
-        yield item
+        if name and image_url:
+            if "https://static-exp" in image_url:
+                pass
+            else:
+                item = ModuleItem(name=name, image_url=image_url, message=message, address=address, job=job,name_url=name_url,image_name=image_name)
+                yield item
+        else:
+            pass
+            # static
