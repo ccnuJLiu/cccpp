@@ -9,4 +9,4 @@
 
 from scrapy import cmdline
 
-cmdline.execute("scrapy crawl sougou_spider".split())
+cmdline.execute("scrapy crawl sougou_spider_cp".split())
