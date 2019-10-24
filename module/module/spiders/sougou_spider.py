@@ -58,9 +58,9 @@ class SougouSpiderSpider(scrapy.Spider):
                 yield scrapy.Request(url_name[j], callback=self.parse_message,dont_filter=True)
 
     def parse_message(self, response):
-        content = response.xpath("//div[@class='topcard__bottom-section']")
-        image_url = content.xpath(".//img[@class='entity-image entity-image--profile entity-image--circle-8 topcard__profile-image lazy-load']/@data-delayed-url").extract()
-        name = content.xpath(".//img[@class='entity-image entity-image--profile entity-image--circle-8 topcard__profile-image lazy-load']/@alt").extract()
+        content = response.xpath("//div[@class='topcard__bottom-section'] | //div[@class='top-card-layout__card']")
+        image_url = content.xpath(".//img[contains(@class, 'entity-image entity-image--profile entity-image--circle-8')]/@data-delayed-url").extract()
+        name = content.xpath(".//img[contains(@class, 'entity-image entity-image--profile entity-image--circle-8')]/@alt").extract()
         # if not name_index:
         #     name = ''
         # else:
@@ -73,7 +73,7 @@ class SougouSpiderSpider(scrapy.Spider):
                 fp.write(name_new)
                 fp.write('\n')
         message = content.xpath(".//h2/text()").extract()
-        address = content.xpath(".//h3/text()").extract()
+        address = content.xpath(".//h3/text() | .//h3/span[@class='top-card__subline-item']/text()").extract()
         job = content.xpath(".//h4/text()").extract()
 
         name_list = response.xpath("//div[@class='right-rail']/div/ul/li/a/img/@alt").extract()
