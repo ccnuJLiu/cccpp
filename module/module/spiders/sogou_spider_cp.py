@@ -4,7 +4,7 @@ from scrapy.selector.unified import SelectorList
 from module.items import ModuleItem
 #上面导包路径没有问题
 class SougouSpiderSpider(scrapy.Spider):
-    name = 'sougou_spider'
+    name = 'sougou_spider_cp'
     allowed_domains = ['www.sogou.com', 'snapshot.sogoucdn.com']
     # start_urls = ['https://www.sogou.com/web?query=Joseph%20Paparella+linkedin&_asf=www.sogou.com']
     url_template = 'https://www.sogou.com/web?query={name}+linkedin&_asf=www.sogou.com&page={page}'
@@ -55,7 +55,7 @@ class SougouSpiderSpider(scrapy.Spider):
             if  not url_name:
                 return
             else:
-                yield scrapy.Request(url_name[j], callback=self.parse_message,dont_filter=True)
+                yield scrapy.Request(url_name[j], callback=self.parse_message)
 
     def parse_message(self, response):
         content = response.xpath("//div[@class='topcard__bottom-section'] | //div[@class='top-card-layout__card']")
