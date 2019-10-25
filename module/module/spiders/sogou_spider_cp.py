@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import scrapy
+from pymongo import MongoClient
 from scrapy.selector.unified import SelectorList
 from module.items import ModuleItem
 #上面导包路径没有问题
@@ -10,24 +11,28 @@ class SougouSpiderSpider(scrapy.Spider):
     url_template = 'https://www.sogou.com/web?query={name}+linkedin&_asf=www.sogou.com&page={page}'
     # name_save = []
     def start_requests(self):
-        with open('./module/name_use.txt', 'r',encoding='gbk') as f:
-            name_list1 = f.readlines()
-            name_set1 = set(name_list1)
-        with open('./module/name_use.txt', 'w',encoding='gbk') as fp:
-            for name1 in name_set1:
-                name1 = name1.strip("\n")
-                fp.write(name1)
-                fp.write('\n')
-        with open('./module/name_use1.txt', 'r',encoding='gbk') as f:
-            name_list2 = f.readlines()
-            name_set2 = set(name_list2)
-        name_search = name_set2.difference(name_set1)
-        with open('./module/name_use1.txt', 'w',encoding='gbk') as fp:
-            for name2 in name_search:
-                name2 = name2.strip("\n")
-                fp.write(name2)
-                fp.write('\n')
-        print(name_search)
+        client = MongoClient('localhost', 27017)
+        db = client.LinkedinData
+        oldDataSet = db.oldName
+        newDataSet = db.newName
+        dict_old = oldDataSet.find()
+        name_old = set()
+        dict_new = newDataSet.find()
+        name_new = set()
+        for dict_name1 in dict_old:
+            name_old.add(dict_name1["name"])
+
+        for dict_name2 in dict_new:
+            name_new.add(dict_name2["name"])
+
+        oldDataSet.delete_many({})
+        newDataSet.delete_many({})
+        for name1 in name_old:
+            oldDataSet.insert({"name":name1})
+        name_search = name_new.difference(name_old)
+        for name2 in name_search:
+            newDataSet.insert({"name":name2})
+        name_search = name_new.difference(name_old)
         for name in name_search:
             name = name.strip("\n")
             for page in range(1,2):
@@ -58,8 +63,11 @@ class SougouSpiderSpider(scrapy.Spider):
                 yield scrapy.Request(url_name[j], callback=self.parse_message)
 
     def parse_message(self, response):
+        client = MongoClient("mongodb://127.0.0.1:27017")
+        db = client.LinkedinData
         content = response.xpath("//div[@class='topcard__bottom-section'] | //div[@class='top-card-layout__card']")
         image_url = content.xpath(".//img[contains(@class, 'entity-image entity-image--profile entity-image--circle-8')]/@data-delayed-url").extract()
+
         if not image_url:
             image_name =""
         else:
@@ -73,10 +81,13 @@ class SougouSpiderSpider(scrapy.Spider):
         if not name:
             pass
         else:
-            with open('./module/name_use.txt', 'a') as fp:
-                name_new = name[0]
-                fp.write(name_new)
-                fp.write('\n')
+            # with open('./module/name_use.txt', 'a') as fp:
+            #     name_new = name[0]
+            #     fp.write(name_new)
+            #     fp.write('\n')
+            name_old = name[0]
+            oldDataSet = db.oldName
+            oldDataSet.insert({"name":name_old})
         message = content.xpath(".//h2/text()").extract()
         address = content.xpath(".//h3/text() | .//h3/span[@class='top-card__subline-item']/text()").extract()
         job = content.xpath(".//h4/text()").extract()
@@ -85,10 +96,9 @@ class SougouSpiderSpider(scrapy.Spider):
 
         # name_list = right_rail.xpath(".//img/@alt").extract()
         print(name_list)
-        with open('./module/name_use1.txt', 'a') as fp:
-            for name1 in name_list:
-                fp.write(name1)
-                fp.write('\n')
+        for name1 in name_list:
+            newDataSet = db.newName
+            newDataSet.insert({"name":name1})
         if name and image_url:
             if "https://static-exp" in image_url:
                 pass

@@ -1,5 +1,9 @@
-# url = "https://media.licdn.com/dms/image/C5603AQGzOSMXxyRLzQ/profile-displayphoto-shrink_200_200/0?e=1576713600&v=beta&t=khmcFeBVuwvLDm3H2Q3UiwoabpKtFr9ZqGkEIOn79UI"
-# a = hash(url)
-# print(a)
-# b = hash(url)
-# print(b)
+from pymongo import MongoClient
+
+client = MongoClient('localhost', 27017)
+db = client.LinkedinData
+DataSet = db.oldName
+dict_all = DataSet.find()
+for dict_name in dict_all:
+    print(dict_name["name"])
+
