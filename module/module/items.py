@@ -16,5 +16,7 @@ class ModuleItem(scrapy.Item):
     message = scrapy.Field()
     address = scrapy.Field()
     job = scrapy.Field()
+    job_experience = scrapy.Field()
+    study_experience = scrapy.Field()
 
 

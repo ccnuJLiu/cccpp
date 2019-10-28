@@ -212,12 +212,13 @@ class AgentMiddleware(UserAgentMiddleware):
         request.headers['User-Agent']= user_agent
 
 # 隧道服务器
-tunnel_host = "tps136.kdlapi.com"
+tunnel_host = "tps168.kdlapi.com"
 tunnel_port = "15818"
 
 # 隧道id和密码
-tid = "t17166103219953"
-password = "jfix70w2"
+tid = "t17199626875276"
+password = "wf5d9tyv"
+
 
 logger = logging.getLogger(__name__)
 

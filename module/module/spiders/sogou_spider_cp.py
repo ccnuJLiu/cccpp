@@ -53,9 +53,6 @@ class SougouSpiderSpider(scrapy.Spider):
                     if "linkedin.com" in temp2[0] :
                         url_name.append(temp1[0])
 
-        print("%"*2+"parse"+"%"*2)
-        print(url_name)
-        print("%" * 2 + "parse" + "%" * 2)
         for j in range(len(url_name)):
             if  not url_name:
                 return
@@ -63,8 +60,8 @@ class SougouSpiderSpider(scrapy.Spider):
                 yield scrapy.Request(url_name[j], callback=self.parse_message)
 
     def parse_message(self, response):
-        client = MongoClient("mongodb://127.0.0.1:27017")
-        db = client.LinkedinData
+        # client = MongoClient("mongodb://127.0.0.1:27017")
+        # db = client.LinkedinData
         content = response.xpath("//div[@class='topcard__bottom-section'] | //div[@class='top-card-layout__card']")
         image_url = content.xpath(".//img[contains(@class, 'entity-image entity-image--profile entity-image--circle-8')]/@data-delayed-url").extract()
 
@@ -81,11 +78,9 @@ class SougouSpiderSpider(scrapy.Spider):
         if not name:
             pass
         else:
-            # with open('./module/name_use.txt', 'a') as fp:
-            #     name_new = name[0]
-            #     fp.write(name_new)
-            #     fp.write('\n')
             name_old = name[0]
+            client = MongoClient("mongodb://127.0.0.1:27017")
+            db = client.LinkedinData
             oldDataSet = db.oldName
             oldDataSet.insert({"name":name_old})
         message = content.xpath(".//h2/text()").extract()
@@ -93,18 +88,21 @@ class SougouSpiderSpider(scrapy.Spider):
         job = content.xpath(".//h4/text()").extract()
         name_url = content.xpath("/html/body/div[1]/div/p/a/@href").extract()
         name_list = response.xpath("//div[@class='right-rail']/div/ul/li/a/img/@alt").extract()
+        job_experience_index  = response.xpath("//section[@class='experience pp-section']/ul")
+        job_experience  = job_experience_index.xpath("string(.)").extract()
+        study_experience_index  = response.xpath("//section[@class='education pp-section']/ul")
+        study_experience  = study_experience_index.xpath("string(.)").extract()
 
-        # name_list = right_rail.xpath(".//img/@alt").extract()
-        print(name_list)
         for name1 in name_list:
+            client = MongoClient("mongodb://127.0.0.1:27017")
+            db = client.LinkedinData
             newDataSet = db.newName
             newDataSet.insert({"name":name1})
         if name and image_url:
             if "https://static-exp" in image_url:
                 pass
             else:
-                item = ModuleItem(name=name, image_url=image_url, message=message, address=address, job=job,name_url=name_url,image_name=image_name)
+                item = ModuleItem(name=name, image_url=image_url, message=message, address=address, job=job,name_url=name_url,image_name=image_name,job_experience=job_experience,study_experience=study_experience)
                 yield item
         else:
             pass
-            # static
