@@ -15,24 +15,21 @@ class SougouSpiderSpider(scrapy.Spider):
         db = client.LinkedinData
         oldDataSet = db.oldName
         newDataSet = db.newName
-        dict_old = oldDataSet.find()
-        name_old = set()
-        dict_new = newDataSet.find()
-        name_new = set()
-        for dict_name1 in dict_old:
-            name_old.add(dict_name1["name"])
-
-        for dict_name2 in dict_new:
-            name_new.add(dict_name2["name"])
-
-        oldDataSet.delete_many({})
-        newDataSet.delete_many({})
-        for name1 in name_old:
-            oldDataSet.insert({"name":name1})
-        name_search = name_new.difference(name_old)
-        for name2 in name_search:
-            newDataSet.insert({"name":name2})
-        name_search = name_new.difference(name_old)
+        for url_old in oldDataSet.distinct("name"):
+            num_old = oldDataSet.count({"name": url_old})
+            for i in range(1, num_old):
+                oldDataSet.remove({"name": url_old})
+            num_dif = newDataSet.count({"name": url_old})
+            for i in range(num_dif):
+                newDataSet.remove({"name": url_old})
+        for url_new in newDataSet.distinct("name"):
+            num_new = newDataSet.count({"name": url_new})
+            for i in range(1, num_new):
+                newDataSet.remove({"name": url_new})
+        if newDataSet.find().count() >100000:
+            name_search = newDataSet.distinct("name")[:100000]
+        else:
+            name_search = newDataSet.distinct("name")
         for name in name_search:
             name = name.strip("\n")
             for page in range(1,2):

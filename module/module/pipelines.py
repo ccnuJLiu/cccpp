@@ -31,7 +31,10 @@ class ModulePipeline(object):
                             "address":item["address"],
                             "job":item["job"],
                             "name_url":item["name_url"],
-                            "image_name":item["image_name"]})
+                            "image_name":item["image_name"],
+                            "job_experience": item["job_experience"],
+                            "study_experience": item["study_experience"]
+                            })
             # self.exporter.export_item(item)
         else:
             pass
