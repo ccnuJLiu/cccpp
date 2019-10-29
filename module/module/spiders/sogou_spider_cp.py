@@ -15,30 +15,28 @@ class SougouSpiderSpider(scrapy.Spider):
         db = client.LinkedinData
         oldDataSet = db.oldName
         newDataSet = db.newName
-        for url_old in oldDataSet.distinct("name"):
-            num_old = oldDataSet.count({"name": url_old})
-            for i in range(1, num_old):
-                oldDataSet.remove({"name": url_old})
-            num_dif = newDataSet.count({"name": url_old})
-            for i in range(num_dif):
-                newDataSet.remove({"name": url_old})
-        for url_new in newDataSet.distinct("name"):
-            num_new = newDataSet.count({"name": url_new})
-            for i in range(1, num_new):
-                newDataSet.remove({"name": url_new})
-        if newDataSet.find().count() >100000:
-            name_search = newDataSet.distinct("name")[:100000]
-        else:
-            name_search = newDataSet.distinct("name")
+        oldDataSet.distinct("name")
+        name_old_list = oldDataSet.distinct("name")
+        name_new_list = newDataSet.distinct("name")
+        name_old_set =set(name_old_list)
+        name_new_set =set(name_new_list)
+        oldDataSet.delete_many({})
+        newDataSet.delete_many({})
+        for name1 in name_old_set:
+            oldDataSet.insert({"name":name1})
+        name_search = name_new_set.difference(name_old_set)
+        for name2 in name_search:
+            newDataSet.insert({"name":name2})
+
         for name in name_search:
             name = name.strip("\n")
-            for page in range(1,2):
+            for page in range(1,30):
                 url_next = self.url_template.format(name=name,page=page)
                 yield scrapy.Request(url_next,callback=self.parse)
 
     def parse(self, response):
         url_name = []
-        for i in range(0,8):
+        for i in range(0,10):
             temp1 = response.xpath("//div[@class='fb']/a[@id='sogou_snapshot_"+str(i)+"']/@href").extract()
             temp2 = response.xpath("//div[@class='fb']/cite[@id='cacheresult_info_" + str(i)+"']/text()").extract()
             if not temp1 :
@@ -68,9 +66,9 @@ class SougouSpiderSpider(scrapy.Spider):
             image_url = image_url[0]
             image_hashcode = hash(image_url)
             if image_hashcode < 0:
-                image_name = str(abs(image_hashcode))+"-"
+                image_name = str(abs(image_hashcode))+"-01"
             else:
-                image_name = str(image_hashcode)
+                image_name = str(image_hashcode)+"01"
         name = content.xpath(".//img[contains(@class, 'entity-image entity-image--profile entity-image--circle-8')]/@alt").extract()
         if not name:
             pass

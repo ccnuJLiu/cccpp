@@ -3,7 +3,8 @@ from pymongo import MongoClient
 client = MongoClient('localhost', 27017)
 db = client.LinkedinData
 DataSet = db.newName
-DataSet.insert({"name":"Joanna Poon"})
+a= DataSet.find().count()
+print(a)
 # for url in DataSet.distinct("name"):
 #     num = DataSet.count({"name":url})
 #     for i in range(1,num):
